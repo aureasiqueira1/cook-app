@@ -49,3 +49,122 @@ Inicie o projeto (com yarn ou npm)
 ```bash
   npx expo start
 ```
+
+
+## ⚙️ Obs: Configuração do Supabase
+
+### Crie um novo projeto:
+- Login: https://supabase.com/
+- New project
+- name: cookapp
+- Criar senha
+- Create new project
+
+ <br />
+ 
+ ### Crie uma nova tabela:
+- Table Editor
+- Create a new table
+- Desabilitar RSL
+
+ <br />
+ 
+  ### Tabela Ingredients:
+- name: ingredients
+- columns:
+  - id uuid ramdom
+  - name varchar
+  - image text
+- Insert
+- Insert data from CSV
+- Pasta src/database/ingredients_rows
+
+ <br />
+
+ ### Tabela Recipes:
+- name: recipes
+- columns:
+  - id uuid ramdom
+  - name varchar
+  - minutes int8
+  - image text
+- Insert
+- Insert data from CSV
+- Pasta src/database/recipes_rows
+  
+ <br />
+ 
+ ### Tabela Preparations:
+- name: preparations
+- columns:
+  - id uuid ramdom
+  - recipe_id uuid ramdom
+  - description text
+  - step int8
+- Insert
+- Insert data from CSV
+- Pasta src/database/preparations_rows
+
+   <br />
+ 
+ ### Tabela De Relacionamento entre Receitas e Ingredientes:
+- name: recipes_ingredients
+- columns:
+  - id uuid ramdom
+  - recipe_id uuid
+  - ingredient_id uuid
+- Insert
+- Insert data from CSV
+- Pasta src/database/recipes_ingredients_rows
+
+ <br />
+
+ ## Imagens:
+- Storage
+- New bucket
+- name: ingredients
+- Arrasta imagem da pasta images
+
+ <br />
+
+## Variáveis de ambiente (.env):
+- Configurações do projeto
+- API
+- EXPO_PUBLIC_SUPABASE_URL= URL
+- EXPO_PUBLIC_SUPABASE_ANON_KE = anonpublic
+
+ <br />
+ 
+## Adicionar função - SQL Editor:
+
+```sh
+CREATE OR REPLACE FUNCTION recipes_by_ingredients(ids UUID[])
+RETURNS setof recipes
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        recipes.id,
+        recipes.name,
+        recipes.minutes,
+        recipes.image
+    FROM
+        recipes_ingredients
+    INNER JOIN
+        recipes ON recipes_ingredients.recipe_id = recipes.id
+    WHERE
+        recipes_ingredients.ingredient_id = ANY(ids)
+    GROUP BY recipes.id;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+## Image Path:
+- Supabase - Storage
+- Clica em uma imagem
+- Get URL
+- Remove o último nome da URL
+- Substitui imagePath na pasta services/index
+  
+
+
